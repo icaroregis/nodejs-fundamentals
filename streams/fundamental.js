@@ -6,7 +6,7 @@
 import { Readable, Writable, Transform } from 'node:stream';
 
 class OneToHundredStream extends Readable {
-  //push => é o método que é utilizado em uma stream para fornecer informações para quem estiver consumindo ela.
+  //push => é o método que é utilizado em uma stream para fornecer/enviar informações para quem estiver consumindo ela.
   index = 1;
   _read() {
     const i = this.index++;
