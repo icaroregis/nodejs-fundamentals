@@ -8,7 +8,7 @@ export async function json(request, response) {
   try {
     request.body = JSON.parse(Buffer.concat(buffers).toString());
   } catch (error) {
-    request.body = null;
+    request.body = {};
   }
 
   response.setHeader('Content-type', 'application/json');

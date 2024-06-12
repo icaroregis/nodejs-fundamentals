@@ -12,19 +12,26 @@ import { json } from './middlewares/json.js';
 
 // HTTP Status Code.
 
+//Query Parameters: BUSCA http://localhost:3333/users?userId=1 => filtros, paginação, não obrigatórios
+//Route Parameters: DELETE http://localhost:3333/users/1 => identificação de recurso.
+//Request Body: {nome: "Ícaro Regis", email: "icaroregisalmeida@gmail.com"} => Envio de informações de um formulário.
+
 const server = http.createServer(async (request, response) => {
   const { method, url } = request;
 
   //a nossa requisição chegou aqui e foi interceptada por outro arquivo, isso é um middleware e geralmente são fáceis de identificar pois recebem a request e response.
   await json(request, response);
 
-  const route = routes.find((route) => route.method === method && route.path === url);
+  const route = routes.find((route) => {
+    const regex = new RegExp(`^${route.path}$`);
+    return route.method === method && regex.test(url);
+  });
 
   if (route) {
     route.handler(request, response);
+  } else {
+    response.writeHead(404).end('Rota não encontrada!');
   }
-
-  return response.writeHead(404).end('Rota não encontrada!');
 });
 
 server.listen(3333);

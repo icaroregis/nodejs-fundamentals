@@ -21,13 +21,19 @@ export class Database {
   }
 
   insert(table, data) {
-    if (Array.isArray(this.#database[table])) {
-      this.#database[table].push(data);
+    if (!Array.isArray(this.#database[table])) {
+      this.#database[table] = [];
     }
 
-    // let data = "someData";
-    // let array = [data]; // array é ["someData"]
-    this.#database[table] = [data];
+    const existingUser = this.#database[table].find((user) => {
+      return user.email === data.email;
+    });
+
+    if (existingUser) {
+      throw new Error('Email já cadastrado');
+    }
+
+    this.#database[table].push(data);
 
     this.#persist();
     return data;
