@@ -1,6 +1,7 @@
 import http from 'node:http';
 import { routes } from './routes.js';
 import { json } from './middlewares/json.js';
+import { buildRoutePath } from './utils/buildRoutePath.js';
 
 // request => conseguimos acessar através da requisição que está chegando em nosso servidor todos os parâmetros da requisição de quem esta chamando o nosso servidor, exemplo: Criar um usuário(name, email, senha).
 
@@ -19,6 +20,9 @@ import { json } from './middlewares/json.js';
 const server = http.createServer(async (request, response) => {
   const { method, url } = request;
 
+  console.log('método', method);
+  console.log('url', url);
+
   //a nossa requisição chegou aqui e foi interceptada por outro arquivo, isso é um middleware e geralmente são fáceis de identificar pois recebem a request e response.
   await json(request, response);
 
@@ -28,6 +32,12 @@ const server = http.createServer(async (request, response) => {
   });
 
   if (route) {
+    const regexPath = buildRoutePath(route.path);
+    const regex = new RegExp(`^${regexPath}$`);
+    const match = url.match(regex);
+    if (match) {
+      request.params = match.groups;
+    }
     route.handler(request, response);
   } else {
     response.writeHead(404).end('Rota não encontrada!');

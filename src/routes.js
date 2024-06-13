@@ -37,8 +37,20 @@ export const routes = [
   {
     method: 'DELETE',
     path: buildRoutePath('/users/:id'),
-    handler: (response, request) => {
-      const { id } = request.body;
+    handler: (request, response) => {
+      const { id } = request.params;
+
+      if (!id) {
+        return response.writeHead(400).end('Id é obrigatório!');
+      }
+
+      const user = database.delete('users', id);
+
+      if (user) {
+        return response.writeHead(204).end();
+      }
+
+      return response.writeHead(404).end('Usuário não encontrado!');
     },
   },
 ];
@@ -48,3 +60,5 @@ routes.forEach((route) => {
   const params = extractRouteParameters(route.path);
   console.log('Parâmetros:', params);
 });
+
+console.log('routes', routes);
