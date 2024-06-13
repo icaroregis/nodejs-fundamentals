@@ -53,6 +53,28 @@ export const routes = [
       return response.writeHead(404).end('Usuário não encontrado!');
     },
   },
+  {
+    method: 'PUT',
+    path: buildRoutePath('/users/:id'),
+    handler: (request, response) => {
+      const { id } = request.params;
+      const { nome, email } = request.body;
+
+      if (!id) {
+        return response.writeHead(400).end('Id é obrigatório!');
+      }
+
+      const updatedUser = database.update('users', id, { nome, email });
+
+      if (updatedUser) {
+        return response
+          .setHeader('Content-type', 'application/json')
+          .end(JSON.stringify(updatedUser));
+      }
+
+      return response.writeHead(404).end('Usuário não encontrado!');
+    },
+  },
 ];
 
 routes.forEach((route) => {

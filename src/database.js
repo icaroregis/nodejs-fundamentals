@@ -43,9 +43,21 @@ export class Database {
     const index = this.#database[table].findIndex((user) => user.id === id);
     if (index !== -1) {
       this.#database[table].splice(index, 1);
+      this.#persist();
       return true;
     } else {
       return false;
+    }
+  }
+
+  update(table, id, data) {
+    const index = this.#database[table].findIndex((user) => user.id === id);
+    if (index !== -1) {
+      this.#database[table][index] = { ...this.#database[table][index], ...data };
+      this.#persist();
+      return this.#database[table][index];
+    } else {
+      return null;
     }
   }
 }
